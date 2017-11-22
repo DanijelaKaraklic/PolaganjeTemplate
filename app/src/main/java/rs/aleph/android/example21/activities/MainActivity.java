@@ -15,13 +15,23 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+
+import java.sql.SQLException;
+import java.util.List;
+
 import rs.aleph.android.example21.R;
+import rs.aleph.android.example21.db.DatabaseHelper;
+import rs.aleph.android.example21.db.model.Category;
+import rs.aleph.android.example21.db.model.Product;
 import rs.aleph.android.example21.dialogs.AboutDialog;
 
 public class MainActivity extends AppCompatActivity{
@@ -29,6 +39,8 @@ public class MainActivity extends AppCompatActivity{
 
 
     private AlertDialog dialog;
+    //za rad sa bazom
+    private DatabaseHelper databaseHelper;
 
 
 
@@ -77,7 +89,7 @@ public class MainActivity extends AppCompatActivity{
 
 
 
-        
+
         //samples of views
       /*  EditText name = (EditText) findViewById(R.id.name);
         name.setText(product.getmName());
@@ -183,6 +195,57 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
+
+    private void addItem(String name, String description, float rating, Category category, String image){
+
+        Product product = new Product();
+        product.setmName(name);
+        product.setDescription(description);
+        product.setRating(rating);
+        product.setImage(image);
+        product.setCategory(category);
+
+        //pozovemo metodu create da bi upisali u bazu
+        try {
+            getDatabaseHelper().getProductDao().create(product);
+
+            refresh();
+
+            Toast.makeText(this, "Product inserted", Toast.LENGTH_SHORT).show();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void refresh() {
+        ListView listview = (ListView) findViewById(R.id.products);
+
+        if (listview != null){
+            ArrayAdapter<Product> adapter = (ArrayAdapter<Product>) listview.getAdapter();
+
+            if(adapter!= null)
+            {
+                try {
+                    adapter.clear();
+                    List<Product> list = getDatabaseHelper().getProductDao().queryForAll();
+
+                    adapter.addAll(list);
+
+                    adapter.notifyDataSetChanged();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public DatabaseHelper getDatabaseHelper() {
+        if (databaseHelper == null) {
+            databaseHelper = OpenHelperManager.getHelper(this, DatabaseHelper.class);
+        }
+        return databaseHelper;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_item_master, menu);
@@ -240,6 +303,14 @@ public class MainActivity extends AppCompatActivity{
 
     }*/
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (databaseHelper != null) {
+            OpenHelperManager.releaseHelper();
+            databaseHelper = null;
+        }
+    }
 }
 
 
