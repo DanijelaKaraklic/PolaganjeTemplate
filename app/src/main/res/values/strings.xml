@@ -24,6 +24,7 @@
     <string name="pref_syncConnectionType">Sync interval</string>
     <string name="pref_sync_list">pref_sync_list</string>
     <string name="detail_activity">Detail Activity</string>
+    <string name="pref_edit">pref_edit</string>
 
 
 </resources>

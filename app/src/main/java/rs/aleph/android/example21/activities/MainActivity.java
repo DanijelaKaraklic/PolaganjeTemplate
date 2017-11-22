@@ -1,9 +1,16 @@
 package rs.aleph.android.example21.activities;
 
 import android.app.Dialog;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,12 +35,28 @@ public class MainActivity extends AppCompatActivity{
 
 
     private int productId = 0;
+    private static int NOTIFICATION_ID = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
+
+        //showing notification
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_stat_buy);
+        builder.setSmallIcon(R.drawable.ic_stat_buy);
+        builder.setContentTitle("Title");
+        builder.setContentText("Content title");
+        builder.setLargeIcon(bitmap);
+
+        // Shows notification with the notification manager (notification ID is used to update the notification later on)
+        //umesto this aktivnost
+        NotificationManager manager = (NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(NOTIFICATION_ID, builder.build());
+
+
 
         //showing AboutDialog
         if (dialog == null){
@@ -46,6 +69,35 @@ public class MainActivity extends AppCompatActivity{
 
         dialog.show();
 
+        //Pristupanje deljenim podesavanjima,primaju samo primitivne tipove
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        //default vrednost iz liste "1"
+        String s = sharedPreferences.getString("@string/pref_sync","1");
+        boolean b = sharedPreferences.getBoolean("@string/pref_sync",false);
+
+
+
+        
+        //samples of views
+      /*  EditText name = (EditText) findViewById(R.id.name);
+        name.setText(product.getmName());
+
+        EditText description = (EditText) findViewById(R.id.description);
+        description.setText(product.getDescription());
+
+        RatingBar ratingBar = (RatingBar) findViewById(R.id.rating);
+        ratingBar.setRating(product.getRating());
+
+        ImageView imageView = (ImageView) findViewById(R.id.image);
+        InputStream is = null;
+        try {
+            is = getAssets().open(product.getImage());
+            Drawable drawable = Drawable.createFromStream(is, null);
+            imageView.setImageDrawable(drawable);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        */
 
 
         //Showing a dialog

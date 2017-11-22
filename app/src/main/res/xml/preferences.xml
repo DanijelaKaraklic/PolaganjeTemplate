@@ -20,6 +20,10 @@
             android:title="@string/pref_syncConnectionType" 
             android:summary="%s"
             android:defaultValue="1"/>
+        <EditTextPreference
+            android:key="@string/pref_edit"
+            android:title="Input data">
+        </EditTextPreference>
         
     </PreferenceCategory>
 
