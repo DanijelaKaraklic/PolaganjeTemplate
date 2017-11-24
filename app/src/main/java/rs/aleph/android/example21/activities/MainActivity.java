@@ -26,6 +26,9 @@ import android.widget.Toast;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import rs.aleph.android.example21.R;
@@ -208,6 +211,24 @@ public class MainActivity extends AppCompatActivity{
         //pozovemo metodu create da bi upisali u bazu
         try {
             getDatabaseHelper().getProductDao().create(product);
+            getDatabaseHelper().getProductDao().update(product);
+            if (product != null) {
+                getDatabaseHelper().getProductDao().delete(product);
+            }
+            getDatabaseHelper().getProductDao().queryBuilder().
+                    where().
+                    eq(Product.FIELD_NAME_NAME,"nesto").
+                    query();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy.");
+            try {
+                Date date = sdf.parse("12.02.2014.");
+                String dateString = sdf.format(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+
 
             refresh();
 
